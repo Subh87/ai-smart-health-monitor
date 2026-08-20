@@ -1,7 +1,18 @@
 import axios from 'axios';
 import { ReadingRecord, ThresholdAlert, AIAnalysisResult, DeviceStatus, User } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+const getApiBaseUrl = (): string => {
+  let url = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api').trim();
+  if (url.endsWith('/')) {
+    url = url.slice(0, -1);
+  }
+  if (!url.endsWith('/api')) {
+    url += '/api';
+  }
+  return url;
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 const api = axios.create({
   baseURL: API_BASE_URL,
