@@ -25,11 +25,15 @@ export interface ThresholdAlert {
 
 export interface AIAnalysisResult {
   summary: string;
-  explanations: string[];
-  recheckRecommended: boolean;
-  safetyGuidance: string;
-  questionsForDoctor: string[];
+  explanations?: string[];
+  observations?: string[];
+  recheckRecommended?: boolean;
+  safetyGuidance?: string;
+  questionsForDoctor?: string[];
+  recommendations?: string[];
+  overallStatus?: string;
   disclaimer: string;
+  isRuleBased?: boolean;
 }
 
 export interface User {

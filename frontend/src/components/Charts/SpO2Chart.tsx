@@ -7,7 +7,7 @@ interface SpO2ChartProps {
 }
 
 export const SpO2Chart: React.FC<SpO2ChartProps> = ({ data }) => {
-  const chartData = data.map((d) => ({
+  const chartData = (data || []).map((d) => ({
     time: new Date(d.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     spo2: d.spo2
   }));

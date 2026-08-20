@@ -7,7 +7,7 @@ interface TempChartProps {
 }
 
 export const TempChart: React.FC<TempChartProps> = ({ data }) => {
-  const chartData = data.map((d) => ({
+  const chartData = (data || []).map((d) => ({
     time: new Date(d.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     temperature: d.temperature
   }));

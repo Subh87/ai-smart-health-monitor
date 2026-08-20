@@ -10,10 +10,10 @@ export const HistoryPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
-  const filteredHistory = history.filter(
+  const filteredHistory = (history || []).filter(
     (item) =>
-      item.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.createdAt.includes(searchTerm)
+      (item.status || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (item.createdAt || '').includes(searchTerm)
   );
 
   return (

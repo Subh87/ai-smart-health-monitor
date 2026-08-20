@@ -7,7 +7,7 @@ interface MultiTrendChartProps {
 }
 
 export const MultiTrendChart: React.FC<MultiTrendChartProps> = ({ data }) => {
-  const chartData = data.map((d) => ({
+  const chartData = (data || []).map((d) => ({
     time: new Date(d.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     heartRate: d.heartRate,
     spo2: d.spo2,

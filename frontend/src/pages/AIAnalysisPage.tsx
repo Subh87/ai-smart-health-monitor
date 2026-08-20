@@ -104,9 +104,20 @@ export const AIAnalysisPage: React.FC = () => {
         <div className="space-y-5 animate-fadeIn">
           {/* Summary Box */}
           <div className="glass-card p-6 rounded-2xl border border-teal-500/30 space-y-3 glow-teal">
-            <div className="flex items-center gap-2 text-teal-400">
-              <CheckCircle2 className="w-5 h-5" />
-              <h3 className="text-base font-bold text-white font-outfit">Analysis Summary</h3>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-teal-400">
+                <CheckCircle2 className="w-5 h-5" />
+                <h3 className="text-base font-bold text-white font-outfit">Analysis Summary</h3>
+              </div>
+              {result.overallStatus && (
+                <span className={`text-[10px] uppercase font-extrabold px-2.5 py-1 rounded-md border ${
+                  result.overallStatus === 'NORMAL' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' :
+                  result.overallStatus === 'URGENT' ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' :
+                  'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                }`}>
+                  Status: {result.overallStatus}
+                </span>
+              )}
             </div>
             <p className="text-sm text-slate-200 leading-relaxed font-medium">{result.summary}</p>
           </div>
@@ -119,7 +130,7 @@ export const AIAnalysisPage: React.FC = () => {
                 <h4 className="text-xs font-bold text-white uppercase tracking-wider">Non-Diagnostic Explanations</h4>
               </div>
               <ul className="space-y-2 text-xs text-slate-300 list-disc list-inside">
-                {result.explanations.map((exp, idx) => (
+                {(result.explanations || result.observations || []).map((exp, idx) => (
                   <li key={idx} className="leading-relaxed">{exp}</li>
                 ))}
               </ul>
@@ -130,8 +141,10 @@ export const AIAnalysisPage: React.FC = () => {
                 <Shield className="w-4 h-4" />
                 <h4 className="text-xs font-bold text-white uppercase tracking-wider">Safety & Measurement Guidance</h4>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">{result.safetyGuidance}</p>
-              {result.recheckRecommended && (
+              <p className="text-xs text-slate-300 leading-relaxed">
+                {result.safetyGuidance || 'Re-check readings after 5 minutes of quiet rest if values show unexpected fluctuations.'}
+              </p>
+              {(result.recheckRecommended || result.overallStatus === 'ATTENTION' || result.overallStatus === 'URGENT') && (
                 <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 shrink-0" />
                   <span>Recommendation: Re-check reading after 5 minutes of rest.</span>
@@ -140,14 +153,14 @@ export const AIAnalysisPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Questions for Doctor */}
+          {/* Questions / Recommendations for Doctor */}
           <div className="glass-card p-5 rounded-2xl border border-slate-800 space-y-3">
             <div className="flex items-center gap-2 text-emerald-400">
               <HelpCircle className="w-4 h-4" />
-              <h4 className="text-xs font-bold text-white uppercase tracking-wider">Suggested Questions for Your Doctor</h4>
+              <h4 className="text-xs font-bold text-white uppercase tracking-wider">Suggested Questions & Recommendations</h4>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-300">
-              {result.questionsForDoctor.map((q, i) => (
+              {(result.questionsForDoctor || result.recommendations || []).map((q, i) => (
                 <div key={i} className="p-3 bg-slate-900 rounded-xl border border-slate-800 flex items-start gap-2">
                   <ArrowRight className="w-3.5 h-3.5 text-teal-400 shrink-0 mt-0.5" />
                   <span>{q}</span>
