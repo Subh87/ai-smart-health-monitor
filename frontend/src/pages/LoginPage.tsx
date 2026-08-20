@@ -31,7 +31,13 @@ export const LoginPage: React.FC = () => {
       }
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Authentication failed. Please check credentials.');
+      const errorMessage =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        (err.response?.data && typeof err.response.data === 'string' ? err.response.data : null) ||
+        err.message ||
+        'Authentication failed. Please check credentials.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
