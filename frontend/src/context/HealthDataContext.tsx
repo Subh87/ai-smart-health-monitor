@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { ReadingRecord, ThresholdAlert, DeviceStatus } from '../types';
 import { apiClient } from '../services/apiClient';
 import { useAuth } from './AuthContext';
-import { useDemoMode } from './DemoModeContext';
 
 interface HealthDataContextType {
   latestReading: ReadingRecord | null;
@@ -21,7 +20,6 @@ const HealthDataContext = createContext<HealthDataContextType | undefined>(undef
 
 export const HealthDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
-  const { isDemoMode } = useDemoMode();
   const deviceId = user?.deviceId || import.meta.env.VITE_DEFAULT_DEVICE_ID || 'ESP32-HEALTH-001';
 
   const [latestReading, setLatestReading] = useState<ReadingRecord | null>(null);
@@ -105,15 +103,15 @@ export const HealthDataProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     };
   }, [deviceId]);
 
-  // Periodic polling fallback for live monitoring (every 4s demo / 8s live)
+  // Periodic polling fallback for live telemetry
   useEffect(() => {
     fetchAll();
     const interval = setInterval(() => {
       fetchAll();
-    }, isDemoMode ? 4000 : 8000);
+    }, 5000);
 
     return () => clearInterval(interval);
-  }, [fetchAll, isDemoMode]);
+  }, [fetchAll]);
 
   return (
     <HealthDataContext.Provider

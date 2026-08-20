@@ -45,12 +45,12 @@ public class GeminiAiService {
     public AiChatResponse chatAssistant(AiChatRequest request) {
         if (apiKey != null && !apiKey.isBlank()) {
             try {
-                return callGeminiChatApi(request.getMessage());
+                return callGeminiChatApi(request);
             } catch (Exception e) {
                 System.err.println("Gemini Chat API call failed, falling back: " + e.getMessage());
             }
         }
-        return generateRuleBasedChatResponse(request.getMessage());
+        return generateRuleBasedChatResponse(request);
     }
 
     private AiAnalysisResponse callGeminiApi(AiAnalysisRequest request) throws Exception {
@@ -90,10 +90,18 @@ public class GeminiAiService {
         return new AiAnalysisResponse(overallStatus, summary, observations, recommendations, MEDICAL_DISCLAIMER, false);
     }
 
-    private AiChatResponse callGeminiChatApi(String message) throws Exception {
-        String prompt = "You are an intelligent educational Health AI Assistant for an IoT vital signs monitor.\n" +
-                "Provide helpful, scientifically grounded information to the user's question, while emphasizing non-diagnostic disclaimers.\n" +
-                "User message: " + message;
+    private AiChatResponse callGeminiChatApi(AiChatRequest req) throws Exception {
+        String vitalsInfo = String.format(
+            "Live Telemetry Context: Heart Rate = %s, SpO2 = %s, Temperature = %s.",
+            req.getHeartRate() != null ? req.getHeartRate() + " BPM" : "Not provided",
+            req.getSpo2() != null ? req.getSpo2() + "%" : "Not provided",
+            req.getTemperature() != null ? req.getTemperature() + "°C" : "Not provided"
+        );
+
+        String prompt = "You are an interactive, intelligent educational Health AI Assistant for an IoT vital signs monitor.\n" +
+                vitalsInfo + "\n" +
+                "Provide helpful, concise, scientifically grounded information to the user's question, while emphasizing educational non-diagnostic disclaimers.\n" +
+                "User question: " + req.getMessage();
 
         String replyText = queryGeminiModel(prompt);
         return new AiChatResponse(replyText, MEDICAL_DISCLAIMER);
@@ -175,18 +183,40 @@ public class GeminiAiService {
         return new AiAnalysisResponse(status, summary, obs, recs, MEDICAL_DISCLAIMER, true);
     }
 
-    private AiChatResponse generateRuleBasedChatResponse(String message) {
-        String msgLower = message.toLowerCase();
+    private AiChatResponse generateRuleBasedChatResponse(AiChatRequest req) {
+        String msgLower = req.getMessage() != null ? req.getMessage().toLowerCase() : "";
+        Double hr = req.getHeartRate();
+        Double spo2 = req.getSpo2();
+        Double temp = req.getTemperature();
+
         String reply;
 
-        if (msgLower.contains("spo2") || msgLower.contains("oxygen")) {
-            reply = "Oxygen Saturation (SpO2) measures the percentage of oxygen-saturated hemoglobin relative to total hemoglobin in the blood. Normal baseline for healthy adults at sea level is typically 95% to 100%. Values consistently below 90% may indicate hypoxemia.";
+        if (msgLower.contains("explain") || msgLower.contains("current") || msgLower.contains("reading") || msgLower.contains("vitals")) {
+            StringBuilder sb = new StringBuilder("Here is a breakdown of your current live telemetry vitals:\n");
+            if (hr != null) {
+                sb.append(String.format("• Heart Rate: %.1f BPM (%s)\n", hr, (hr >= 60 && hr <= 100 ? "Normal resting range" : hr > 100 ? "Elevated pulse" : "Low pulse")));
+            }
+            if (spo2 != null) {
+                sb.append(String.format("• Oxygen Saturation (SpO2): %.1f%% (%s)\n", spo2, (spo2 >= 95 ? "Optimal physiological range" : "Slightly reduced saturation")));
+            }
+            if (temp != null) {
+                sb.append(String.format("• Body Temperature: %.1f°C (%s)\n", temp, (temp >= 36.0 && temp <= 37.5 ? "Normal baseline" : temp > 37.5 ? "Elevated thermal reading" : "Cooler thermal reading")));
+            }
+            sb.append("\nConsider resting quietly for 5 minutes and taking follow-up readings to confirm stability.");
+            reply = sb.toString();
+        } else if (msgLower.contains("spo2") || msgLower.contains("oxygen")) {
+            reply = String.format("Oxygen Saturation (SpO2) measures the percentage of oxygen-saturated hemoglobin in the blood. Healthy baseline at sea level is typically 95%% to 100%%.%s",
+                spo2 != null ? String.format(" Your latest recorded reading is %.1f%%.", spo2) : "");
         } else if (msgLower.contains("heart") || msgLower.contains("bpm") || msgLower.contains("pulse")) {
-            reply = "A normal resting heart rate for adults ranges from 60 to 100 beats per minute (BPM). Factors such as exercise, anxiety, fever, and medications can alter pulse rates. Sustained resting heart rates over 100 BPM or under 50 BPM should be evaluated with a medical professional.";
+            reply = String.format("A normal adult resting heart rate ranges from 60 to 100 beats per minute (BPM). Physical activity, stress, caffeine, and fever can elevate pulse rates.%s",
+                hr != null ? String.format(" Your latest recorded pulse is %.1f BPM.", hr) : "");
         } else if (msgLower.contains("temp") || msgLower.contains("fever")) {
-            reply = "Standard body temperature is approximately 36.5°C to 37.5°C (97.7°F - 99.5°F). A reading above 38.0°C (100.4°F) typically signifies a fever, often body's immune response to infection.";
+            reply = String.format("Standard body temperature is approximately 36.5°C to 37.5°C (97.7°F - 99.5°F). Readouts above 38.0°C (100.4°F) typically signify a fever.%s",
+                temp != null ? String.format(" Your latest recorded temperature is %.1f°C.", temp) : "");
+        } else if (msgLower.contains("doctor") || msgLower.contains("hospital") || msgLower.contains("clinical")) {
+            reply = "You should consult a healthcare professional if you experience persistent shortness of breath, chest pain, dizziness, or sustained vitals outside normal physiological thresholds.";
         } else {
-            reply = "I am your AI Smart Health Assistant. You can ask me questions regarding vital sign metrics (SpO2, Heart Rate, Temperature), ESP32 sensor telemetry, or threshold guidance!";
+            reply = "I am your interactive AI Smart Health Assistant. You can ask me questions about your live vitals (Heart Rate, SpO2, Temperature), normal physiological ranges, or measurement guidelines!";
         }
 
         return new AiChatResponse(reply, MEDICAL_DISCLAIMER);

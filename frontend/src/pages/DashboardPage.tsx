@@ -29,20 +29,14 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className={`px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-2 ${
-            deviceStatus?.isOnline ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-rose-500/10 border-rose-500/30 text-rose-400'
-          }`}>
-            <Radio className={`w-3.5 h-3.5 ${deviceStatus?.isOnline ? 'animate-pulse' : ''}`} />
-            <span>{deviceStatus?.isOnline ? 'ESP32 ONLINE' : 'ESP32 OFFLINE'}</span>
-          </div>
-
           <button
             type="button"
             onClick={refreshData}
             title="Refresh readings"
-            className="p-2 bg-slate-900 border border-slate-800 hover:border-slate-600 rounded-xl text-slate-400 hover:text-white transition-colors"
+            className="p-2 bg-slate-900 border border-slate-800 hover:border-slate-600 rounded-xl text-slate-400 hover:text-white transition-colors flex items-center gap-2 text-xs font-semibold"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            <span>Sync Vitals</span>
           </button>
         </div>
       </div>

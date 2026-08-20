@@ -14,7 +14,6 @@ import {
   User as UserIcon,
   LogOut
 } from 'lucide-react';
-import { DemoModeToggle } from './DemoModeToggle';
 import { useAuth } from '../context/AuthContext';
 
 export const navItems = [
@@ -76,8 +75,6 @@ export const Navbar: React.FC = () => {
 
           {/* Right Control Bar */}
           <div className="flex items-center gap-3">
-            <DemoModeToggle />
-
             {isAuthenticated ? (
               <div className="hidden sm:flex items-center gap-2 border-l border-slate-800 pl-3">
                 <div className="text-right">

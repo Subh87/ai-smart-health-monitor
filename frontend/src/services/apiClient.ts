@@ -85,7 +85,7 @@ export const apiClient = {
     return res.data;
   },
 
-  async chatAssistant(payload: { message: string; deviceId?: string }): Promise<{ reply: string; disclaimer: string }> {
+  async chatAssistant(payload: { message: string; heartRate?: number; spo2?: number; temperature?: number; deviceId?: string }): Promise<{ reply: string; disclaimer: string }> {
     const res = await api.post('/ai/chat', payload);
     return res.data;
   },
