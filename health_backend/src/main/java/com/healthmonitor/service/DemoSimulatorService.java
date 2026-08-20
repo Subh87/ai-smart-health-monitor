@@ -12,9 +12,9 @@ public class DemoSimulatorService {
     private final TelemetryService telemetryService;
     private final Random random = new Random();
 
-    private boolean demoModeActive = true;
+    private boolean demoModeActive = false;
     private long lastHeartbeatTime = System.currentTimeMillis();
-    private String defaultDeviceId = "ESP32-DEMO-001";
+    private String defaultDeviceId = "ESP32-HEALTH-001";
 
     public DemoSimulatorService(TelemetryService telemetryService) {
         this.telemetryService = telemetryService;
@@ -33,6 +33,7 @@ public class DemoSimulatorService {
 
     public void updateHeartbeat(String deviceId) {
         this.lastHeartbeatTime = System.currentTimeMillis();
+        this.demoModeActive = false; // Disable background fake telemetry generator when real hardware posts!
         if (deviceId != null && !deviceId.isBlank()) {
             this.defaultDeviceId = deviceId;
         }
