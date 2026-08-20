@@ -1,0 +1,32 @@
+{
+  "name": "ai-smart-health-monitor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack IoT healthcare monitoring system with ESP32 sensors, Spring Boot 3 Java backend, React frontend, and Gemini AI health insights",
+  "scripts": {
+    "dev": "concurrently -k -p \"[{name}]\" -n \"BACKEND,FRONTEND\" -c \"cyan,magenta\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "start": "npm run dev",
+    "dev:backend": "powershell -Command \"& 'C:\\Users\\subha\\.gemini\\antigravity-ide\\scratch\\tools\\maven\\apache-maven-3.9.6\\bin\\mvn.cmd' -f health_backend/pom.xml spring-boot:run\"",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "powershell -Command \"& 'C:\\Users\\subha\\.gemini\\antigravity-ide\\scratch\\tools\\maven\\apache-maven-3.9.6\\bin\\mvn.cmd' -f health_backend/pom.xml clean package -DskipTests\"",
+    "build:frontend": "npm --prefix frontend run build",
+    "test:backend": "powershell -Command \"& 'C:\\Users\\subha\\.gemini\\antigravity-ide\\scratch\\tools\\maven\\apache-maven-3.9.6\\bin\\mvn.cmd' -f health_backend/pom.xml test\""
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5"
+  },
+  "keywords": [
+    "esp32",
+    "iot",
+    "health-monitor",
+    "spring-boot",
+    "java",
+    "gemini-ai",
+    "react",
+    "max30102",
+    "ds18b20"
+  ],
+  "author": "AI Smart Health Team",
+  "license": "MIT"
+}

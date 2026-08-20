@@ -1,0 +1,11 @@
+{
+  "name": "health-backend-springboot",
+  "version": "1.0.0",
+  "description": "Fresh Spring Boot 3 Java Backend for AI Smart Health Monitor",
+  "scripts": {
+    "dev": "powershell -Command \"& 'C:\\Users\\subha\\.gemini\\antigravity-ide\\scratch\\tools\\maven\\apache-maven-3.9.6\\bin\\mvn.cmd' spring-boot:run\"",
+    "start": "npm run dev",
+    "build": "powershell -Command \"& 'C:\\Users\\subha\\.gemini\\antigravity-ide\\scratch\\tools\\maven\\apache-maven-3.9.6\\bin\\mvn.cmd' clean package -DskipTests\"",
+    "test": "powershell -Command \"& 'C:\\Users\\subha\\.gemini\\antigravity-ide\\scratch\\tools\\maven\\apache-maven-3.9.6\\bin\\mvn.cmd' test\""
+  }
+}

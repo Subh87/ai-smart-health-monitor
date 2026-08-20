@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: health-backend
+    env: docker
+    dockerfilePath: ./Dockerfile
+    rootDir: health_backend
+    plan: free
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: APP_CORS_ALLOWED_ORIGINS
+        value: "*"
