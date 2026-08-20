@@ -1,4 +1,4 @@
-export type HealthStatusType = 'NORMAL' | 'ATTENTION' | 'CHECK READING';
+export type HealthStatusType = 'NORMAL' | 'ATTENTION' | 'CHECK READING' | 'NO DATA';
 
 export interface ReadingRecord {
   id: string;

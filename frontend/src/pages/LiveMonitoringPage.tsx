@@ -7,10 +7,10 @@ import { HeartPulse, Activity, Thermometer, Radio, Zap, RefreshCw } from 'lucide
 export const LiveMonitoringPage: React.FC = () => {
   const { latestReading, deviceStatus, refreshData, loading } = useHealthData();
 
-  const heartRate = latestReading?.heartRate ?? 74;
-  const spo2 = latestReading?.spo2 ?? 98;
-  const temperature = latestReading?.temperature ?? 36.6;
-  const status = latestReading?.status ?? 'NORMAL';
+  const heartRate = latestReading ? latestReading.heartRate : '--';
+  const spo2 = latestReading ? latestReading.spo2 : '--';
+  const temperature = latestReading ? latestReading.temperature : '--';
+  const status = latestReading ? latestReading.status : 'NO DATA';
 
   return (
     <div className="space-y-6">

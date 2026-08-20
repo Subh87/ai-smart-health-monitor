@@ -45,12 +45,14 @@ public class TelemetryService {
     }
 
     public ReadingDto getLatestReading(String deviceId) {
-        String effectiveDeviceId = (deviceId != null && !deviceId.isBlank()) ? deviceId : "ESP32-DEMO-001";
-        return readingRepository.findFirstByDeviceIdOrderByTimestampDesc(effectiveDeviceId)
+        if (deviceId != null && !deviceId.isBlank()) {
+            return readingRepository.findFirstByDeviceIdOrderByTimestampDesc(deviceId)
+                    .map(this::toReadingDto)
+                    .orElse(null);
+        }
+        return readingRepository.findFirstByOrderByTimestampDesc()
                 .map(this::toReadingDto)
-                .orElseGet(() -> readingRepository.findFirstByOrderByTimestampDesc()
-                        .map(this::toReadingDto)
-                        .orElseGet(() -> new ReadingDto(null, effectiveDeviceId, 75.0, 98.0, 36.6, "NORMAL", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))));
+                .orElse(null);
     }
 
     public List<ReadingDto> getHistory(String deviceId, String range, int limit) {

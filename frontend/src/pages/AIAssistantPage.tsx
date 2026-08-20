@@ -110,13 +110,13 @@ export const AIAssistantPage: React.FC = () => {
           {/* Live Telemetry Context Badge */}
           <div className="flex items-center gap-3 bg-slate-900/90 border border-slate-800 px-3 py-1.5 rounded-xl text-xs">
             <span className="flex items-center gap-1 text-rose-400 font-bold">
-              <Heart className="w-3.5 h-3.5" /> {heartRate}
+              <Heart className="w-3.5 h-3.5" /> {latestReading ? heartRate : '--'}
             </span>
             <span className="flex items-center gap-1 text-teal-400 font-bold">
-              <Activity className="w-3.5 h-3.5" /> {spo2}%
+              <Activity className="w-3.5 h-3.5" /> {latestReading ? `${spo2}%` : '--'}
             </span>
             <span className="flex items-center gap-1 text-amber-400 font-bold">
-              <Thermometer className="w-3.5 h-3.5" /> {temperature}°C
+              <Thermometer className="w-3.5 h-3.5" /> {latestReading ? `${temperature}°C` : '--'}
             </span>
           </div>
 

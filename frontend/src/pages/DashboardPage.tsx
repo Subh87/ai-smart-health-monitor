@@ -12,10 +12,10 @@ import { Link } from 'react-router-dom';
 export const DashboardPage: React.FC = () => {
   const { latestReading, history, alerts, deviceStatus, loading, refreshData, range, setRange } = useHealthData();
 
-  const heartRate = latestReading?.heartRate ?? 72;
-  const spo2 = latestReading?.spo2 ?? 98;
-  const temperature = latestReading?.temperature ?? 36.6;
-  const status = latestReading?.status ?? 'NORMAL';
+  const heartRate = latestReading ? latestReading.heartRate : '--';
+  const spo2 = latestReading ? latestReading.spo2 : '--';
+  const temperature = latestReading ? latestReading.temperature : '--';
+  const status = latestReading ? latestReading.status : 'NO DATA';
 
   return (
     <div className="space-y-6">
@@ -42,6 +42,18 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       <DisclaimerBanner />
+
+      {/* New User Awaiting Data Notification Banner */}
+      {!latestReading && !loading && (
+        <div className="p-4 rounded-2xl bg-teal-500/10 border border-teal-500/20 text-teal-300 text-xs flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <Radio className="w-5 h-5 text-teal-400 shrink-0 animate-pulse" />
+            <span>
+              <strong>Awaiting First Telemetry Stream:</strong> No historical measurements recorded yet for device <code className="font-mono text-white">{deviceStatus?.deviceId || 'ESP32'}</code>. Connect ESP32 sensors to view live readings.
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Main Metrics Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -91,15 +103,20 @@ export const DashboardPage: React.FC = () => {
               {status === 'NORMAL' && 'All current parameters remain within expected resting ranges.'}
               {status === 'ATTENTION' && 'One or more parameters show mild deviation. Consider resting and taking a follow-up reading.'}
               {status === 'CHECK READING' && 'Readings show high variability. Verify sensor position flat against finger/skin and minimize motion artifacts.'}
+              {status === 'NO DATA' && 'Awaiting initial telemetry readings from ESP32 hardware sensors.'}
             </p>
             <span className="text-[10px] text-slate-500 block">
-              Last sensor update: {latestReading ? new Date(latestReading.createdAt).toLocaleTimeString() : 'Just now'}
+              Last sensor update: {latestReading ? new Date(latestReading.createdAt).toLocaleString() : 'No readings received'}
             </span>
           </div>
 
           <Link
             to="/ai-analysis"
-            className="w-full py-2 bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/30 text-teal-300 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all"
+            className={`w-full py-2 border rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
+              latestReading
+                ? 'bg-teal-500/10 hover:bg-teal-500/20 border-teal-500/30 text-teal-300'
+                : 'bg-slate-900 border-slate-800 text-slate-500 cursor-not-allowed'
+            }`}
           >
             <Brain className="w-4 h-4 text-teal-400" />
             <span>Generate Full AI Analysis</span>
@@ -119,13 +136,21 @@ export const DashboardPage: React.FC = () => {
           </div>
 
           <p className="text-xs text-slate-300 leading-relaxed">
-            "Your heart rate average across recent intervals remains stable at <strong className="text-teal-300">{heartRate} BPM</strong>. Blood oxygen saturation indicates consistent optical detection at <strong className="text-teal-300">{spo2}%</strong>. No significant acute temperature shifts recorded."
+            {latestReading
+              ? `"Your heart rate average across recent intervals remains stable at ${heartRate} BPM. Blood oxygen saturation indicates consistent optical detection at ${spo2}%. No significant acute temperature shifts recorded."`
+              : `"Awaiting ESP32 hardware telemetry stream to generate AI trend insights. Once pulse, oxygen, or temperature data is registered, Gemini AI will evaluate baseline trends here."`}
           </p>
 
           <div className="pt-2 flex flex-wrap gap-2">
-            <span className="text-[11px] px-2.5 py-1 rounded-lg bg-slate-900 text-slate-300 border border-slate-800">HR Trend: Stable</span>
-            <span className="text-[11px] px-2.5 py-1 rounded-lg bg-slate-900 text-slate-300 border border-slate-800">SpO2 Stability: High</span>
-            <span className="text-[11px] px-2.5 py-1 rounded-lg bg-slate-900 text-slate-300 border border-slate-800">Motion Artifacts: Minimal</span>
+            <span className="text-[11px] px-2.5 py-1 rounded-lg bg-slate-900 text-slate-300 border border-slate-800">
+              HR Trend: {latestReading ? 'Stable' : 'Awaiting Data'}
+            </span>
+            <span className="text-[11px] px-2.5 py-1 rounded-lg bg-slate-900 text-slate-300 border border-slate-800">
+              SpO2 Stability: {latestReading ? 'High' : 'Awaiting Data'}
+            </span>
+            <span className="text-[11px] px-2.5 py-1 rounded-lg bg-slate-900 text-slate-300 border border-slate-800">
+              Motion Artifacts: Minimal
+            </span>
           </div>
         </div>
       </div>

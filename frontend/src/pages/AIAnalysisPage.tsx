@@ -12,12 +12,14 @@ export const AIAnalysisPage: React.FC = () => {
   const [result, setResult] = useState<AIAnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const heartRate = latestReading?.heartRate ?? 76;
-  const spo2 = latestReading?.spo2 ?? 98;
-  const temperature = latestReading?.temperature ?? 36.6;
+  const hasData = Boolean(latestReading);
+  const heartRate = latestReading ? latestReading.heartRate : 75;
+  const spo2 = latestReading ? latestReading.spo2 : 98;
+  const temperature = latestReading ? latestReading.temperature : 36.6;
 
   const handleGenerateAnalysis = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!hasData) return;
     setLoading(true);
     setError(null);
 
@@ -55,15 +57,21 @@ export const AIAnalysisPage: React.FC = () => {
         <div className="grid grid-cols-3 gap-3 bg-slate-900/80 p-4 rounded-xl border border-slate-800 text-center text-xs">
           <div>
             <span className="text-slate-400 block">Heart Rate</span>
-            <span className="text-lg font-extrabold text-rose-400 font-outfit">{heartRate} BPM</span>
+            <span className="text-lg font-extrabold text-rose-400 font-outfit">
+              {latestReading ? `${heartRate} BPM` : '--'}
+            </span>
           </div>
           <div>
             <span className="text-slate-400 block">SpO2</span>
-            <span className="text-lg font-extrabold text-teal-400 font-outfit">{spo2}%</span>
+            <span className="text-lg font-extrabold text-teal-400 font-outfit">
+              {latestReading ? `${spo2}%` : '--'}
+            </span>
           </div>
           <div>
             <span className="text-slate-400 block">Temperature</span>
-            <span className="text-lg font-extrabold text-amber-400 font-outfit">{temperature}°C</span>
+            <span className="text-lg font-extrabold text-amber-400 font-outfit">
+              {latestReading ? `${temperature}°C` : '--'}
+            </span>
           </div>
         </div>
 

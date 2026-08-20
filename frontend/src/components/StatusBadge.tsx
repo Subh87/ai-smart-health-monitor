@@ -22,6 +22,12 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md' })
           icon: <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />,
           label: 'ATTENTION'
         };
+      case 'NO DATA':
+        return {
+          bg: 'bg-slate-800/80 border-slate-700 text-slate-400',
+          icon: <RefreshCw className="w-4 h-4 text-slate-400 shrink-0" />,
+          label: 'AWAITING DATA'
+        };
       case 'CHECK READING':
       default:
         return {

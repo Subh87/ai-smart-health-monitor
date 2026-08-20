@@ -27,7 +27,9 @@ public class ReadingsController {
     @GetMapping("/readings/latest")
     public ResponseEntity<Map<String, Object>> getLatestReading(@RequestParam(required = false) String deviceId) {
         ReadingDto reading = telemetryService.getLatestReading(deviceId);
-        return ResponseEntity.ok(Map.of("reading", reading));
+        Map<String, Object> response = new java.util.HashMap<>();
+        response.put("reading", reading);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/readings/history")
